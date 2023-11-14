@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Projet client serveur</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #7FFF00	;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+      }
+
+      form {
+        background-color: #00FFFF;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        margin-right: 10px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+      }
+
+      input,
+      textarea,
+      button {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 16px;
+        box-sizing: border-box;
+      }
+
+      button {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background-color: #0056b3;
+      }
+
+      #result {
+        margin-top: 20px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Bienvenue sur le formulaire Mahami</h1>
+ 
+    <form id="chatForm">
+      <label for="prenom"> Votre Prénom:</label>
+      <input type="text" id="prenom" name="prenom" required />
+
+      <label for="nom">Votre Nom:</label>
+      <input type="text" id="nom" name="nom" required />
+
+      <label for="email">Adresse mail:</label>
+      <input type="email" id="email" name="email" required />
+
+      <label for="recherche">Votre Question:</label>
+      <textarea id="recherche" name="recherche" rows="4" required></textarea>
+
+      <button type="button" onclick="submitForm()">Envoyer</button>
+    </form>
+
+    <div id="result"></div>
+
+    <script>
+      function submitForm() {
+        var prenom = document.getElementById("prenom").value;
+        var nom = document.getElementById("nom").value;
+        var email = document.getElementById("email").value;
+        var recherche = document.getElementById("recherche").value;
+
+        var apiKey = "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";
+        var apiUrl = "https://api.openai.com/v1/chat/completions";
+
+        fetch(apiUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + apiKey,
+          },
+          body: JSON.stringify({
+            model: "gpt-3.5-turbo",
+            messages: [
+              { role: "system", content: "You are a helpful assistant." },
+              { role: "user", content: recherche },
+            ],
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            var resultElement = document.getElementById("result");
+            resultElement.innerText = data.choices[0].message.content;
+
+            addToJSONFile({
+              prenom: prenom,
+              nom: nom,
+              email: email,
+              recherche: recherche,
+              resultat: data.choices[0].message.content,
+            });
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            document.getElementById("result").innerText =
+              "Une erreur s'est produite.";
+          });
+      }
+
+      function addToJSONFile(data) {
+        fetch("http://localhost:3000/submitForm", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        })
+          .then((response) => response.text())
+          .then((message) => console.log(message))
+          .catch((error) => console.error("Error:", error));
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,58 @@
+[
+  {
+    "prenom": "Mohamed",
+    "nom": "Chehem",
+    "email": "chehem21@gmail.com",
+    "recherche": "2+9",
+    "resultat": "2 + 9 equals 11."
+  },
+  {
+    "prenom": "Mohamed",
+    "nom": "Chehem",
+    "email": "chehem21@gmail.com",
+    "recherche": "5-5-47",
+    "resultat": "It appears that you have entered the numbers 5-5-47. Is there anything specific you would like assistance with regarding these numbers?"
+  },
+  {
+    "prenom": "Mohamed",
+    "nom": "Chehem",
+    "email": "chehem21@gmail.com",
+    "recherche": "5-5-47",
+    "resultat": "I'm sorry, but I'm not sure what you're asking or referring to with \"5-5-47.\" Can you please provide more information or clarify your question?"
+  },
+  {
+    "prenom": "Mohamed",
+    "nom": "Chehem",
+    "email": "chehem21@gmail.com",
+    "recherche": "2+4",
+    "resultat": "The sum of 2 and 4 is 6."
+  },
+  {
+    "prenom": "Mohamed",
+    "nom": "Chehem",
+    "email": "alouback21@gmail.com",
+    "recherche": "23+85",
+    "resultat": "23 + 85 equals 108."
+  },
+  {
+    "prenom": "Mohamed",
+    "nom": "Chehem",
+    "email": "af@gmail.com",
+    "recherche": "2-7",
+    "resultat": "The value of 2 minus 7 is -5."
+  },
+  {
+    "prenom": "Mohamed",
+    "nom": "Chehem",
+    "email": "af@gmail.com",
+    "recherche": "2-7",
+    "resultat": "The result of subtracting 7 from 2 is -5."
+  },
+  {
+    "prenom": "Mohamed",
+    "nom": "Chehem",
+    "email": "af@gmail.com",
+    "recherche": "2-7",
+    "resultat": "The result of subtracting 7 from 2 is -5."
+  }
+]
