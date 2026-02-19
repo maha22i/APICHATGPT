@@ -6,7 +6,10 @@ const host = 'localhost';
 const port = 3000;
 
 const requestListener = function (req, res) {
-    if (req.method === 'POST' && req.url === '/submitForm') {
+    const url = new URL(req.url, `http://${req.headers.host}`);
+    const pathname = url.pathname;
+
+    if (req.method === 'POST' && pathname === '/submitForm') {
         let data = '';
 
         req.on('data', chunk => {
@@ -25,7 +28,7 @@ const requestListener = function (req, res) {
                 res.end('Error parsing JSON.');
             }
         });
-    } else if (req.method === 'POST' && req.url === '/sendEmails') {
+    } else if (req.method === 'POST' && pathname === '/sendEmails') {
         let data = '';
 
         req.on('data', chunk => {
@@ -44,7 +47,7 @@ const requestListener = function (req, res) {
                 res.end(JSON.stringify({ error: error.message }));
             }
         });
-    } else if (req.url === '/email-tool') {
+    } else if (pathname === '/email-tool') {
         fs.readFile(path.join(__dirname, "email-tool.html"))
             .then(contents => {
                 res.setHeader("Content-Type", "text/html");
