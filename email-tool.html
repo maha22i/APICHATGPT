@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Outil d'envoi d'emails personnalisés</title>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f2f5;
+        padding: 20px;
+        color: #333;
+      }
+
+      h1 {
+        text-align: center;
+        margin-bottom: 10px;
+        color: #2c3e50;
+      }
+
+      .subtitle {
+        text-align: center;
+        color: #7f8c8d;
+        margin-bottom: 30px;
+      }
+
+      .container {
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+
+      .section {
+        background: #fff;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .section h2 {
+        margin-bottom: 15px;
+        color: #2c3e50;
+        border-bottom: 2px solid #3498db;
+        padding-bottom: 8px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #555;
+      }
+
+      input[type="text"],
+      input[type="email"],
+      input[type="number"],
+      input[type="password"],
+      textarea,
+      select {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+      }
+
+      textarea {
+        resize: vertical;
+        font-family: monospace;
+      }
+
+      input[type="file"] {
+        margin-bottom: 15px;
+      }
+
+      .row {
+        display: flex;
+        gap: 15px;
+      }
+
+      .row > div {
+        flex: 1;
+      }
+
+      button {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: bold;
+        transition: background-color 0.2s;
+      }
+
+      .btn-primary {
+        background-color: #3498db;
+        color: #fff;
+      }
+
+      .btn-primary:hover {
+        background-color: #2980b9;
+      }
+
+      .btn-success {
+        background-color: #27ae60;
+        color: #fff;
+        width: 100%;
+        padding: 15px;
+        font-size: 17px;
+      }
+
+      .btn-success:hover {
+        background-color: #219a52;
+      }
+
+      .btn-success:disabled {
+        background-color: #95a5a6;
+        cursor: not-allowed;
+      }
+
+      .btn-secondary {
+        background-color: #7f8c8d;
+        color: #fff;
+      }
+
+      .btn-secondary:hover {
+        background-color: #6c7a7b;
+      }
+
+      .back-link {
+        display: inline-block;
+        margin-bottom: 20px;
+        color: #3498db;
+        text-decoration: none;
+        font-weight: bold;
+      }
+
+      .back-link:hover {
+        text-decoration: underline;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+      }
+
+      table th,
+      table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+        font-size: 13px;
+      }
+
+      table th {
+        background-color: #3498db;
+        color: #fff;
+      }
+
+      table tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+
+      .table-container {
+        max-height: 300px;
+        overflow-y: auto;
+        margin-top: 10px;
+      }
+
+      .placeholders {
+        background: #eaf2f8;
+        padding: 10px 15px;
+        border-radius: 4px;
+        margin-bottom: 15px;
+        font-size: 13px;
+      }
+
+      .placeholders span {
+        display: inline-block;
+        background: #3498db;
+        color: #fff;
+        padding: 2px 8px;
+        border-radius: 3px;
+        margin: 2px 4px;
+        cursor: pointer;
+        font-family: monospace;
+      }
+
+      .placeholders span:hover {
+        background: #2980b9;
+      }
+
+      #preview {
+        background: #fafafa;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 15px;
+        margin-top: 10px;
+        white-space: pre-wrap;
+        font-size: 14px;
+        max-height: 200px;
+        overflow-y: auto;
+      }
+
+      #log {
+        background: #1e1e1e;
+        color: #0f0;
+        padding: 15px;
+        border-radius: 4px;
+        font-family: monospace;
+        font-size: 13px;
+        max-height: 300px;
+        overflow-y: auto;
+        white-space: pre-wrap;
+        display: none;
+      }
+
+      .progress-bar {
+        width: 100%;
+        background: #ecf0f1;
+        border-radius: 4px;
+        overflow: hidden;
+        margin-top: 10px;
+        display: none;
+      }
+
+      .progress-bar-inner {
+        height: 25px;
+        background: #27ae60;
+        width: 0%;
+        transition: width 0.3s;
+        text-align: center;
+        color: #fff;
+        line-height: 25px;
+        font-size: 13px;
+        font-weight: bold;
+      }
+
+      .hint {
+        font-size: 12px;
+        color: #999;
+        margin-top: -10px;
+        margin-bottom: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <a href="/" class="back-link">&larr; Retour au formulaire principal</a>
+      <h1>Outil d'envoi d'emails personnalisés</h1>
+      <p class="subtitle">
+        Importez un fichier Excel, rédigez votre template et envoyez des emails
+        personnalisés
+      </p>
+
+      <!-- SECTION 1: SMTP Configuration -->
+      <div class="section">
+        <h2>1. Configuration SMTP</h2>
+        <div class="row">
+          <div>
+            <label for="smtpHost">Serveur SMTP :</label>
+            <input
+              type="text"
+              id="smtpHost"
+              placeholder="smtp.gmail.com"
+              value="smtp.gmail.com"
+            />
+          </div>
+          <div>
+            <label for="smtpPort">Port :</label>
+            <input type="number" id="smtpPort" value="587" />
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label for="smtpUser">Email expéditeur :</label>
+            <input
+              type="email"
+              id="smtpUser"
+              placeholder="votre.email@gmail.com"
+            />
+          </div>
+          <div>
+            <label for="smtpPass">Mot de passe / App Password :</label>
+            <input type="password" id="smtpPass" placeholder="••••••••" />
+          </div>
+        </div>
+        <p class="hint">
+          Pour Gmail, utilisez un
+          <a
+            href="https://support.google.com/accounts/answer/185833"
+            target="_blank"
+            >mot de passe d'application</a
+          >.
+        </p>
+      </div>
+
+      <!-- SECTION 2: Excel Import -->
+      <div class="section">
+        <h2>2. Importer le fichier Excel</h2>
+        <p class="hint" style="margin-bottom: 10px">
+          Le fichier doit contenir au minimum une colonne <b>email</b>. Les
+          autres colonnes (nom, prenom, etc.) serviront de variables pour le
+          template.
+        </p>
+        <input type="file" id="excelFile" accept=".xlsx,.xls,.csv" />
+        <div id="excelPreview"></div>
+      </div>
+
+      <!-- SECTION 3: Email Template -->
+      <div class="section">
+        <h2>3. Rédiger le template d'email</h2>
+        <div id="placeholderList" class="placeholders" style="display: none">
+          <strong>Variables disponibles (cliquez pour insérer) :</strong><br />
+        </div>
+
+        <label for="emailSubject">Objet de l'email :</label>
+        <input
+          type="text"
+          id="emailSubject"
+          placeholder="Ex: Bonjour {{prenom}}, voici votre invitation"
+        />
+
+        <label for="emailBody">Corps de l'email :</label>
+        <textarea
+          id="emailBody"
+          rows="10"
+          placeholder="Bonjour {{prenom}} {{nom}},
+
+Nous avons le plaisir de vous informer...
+
+Cordialement,
+L'équipe"
+        ></textarea>
+
+        <button class="btn-primary" onclick="showPreview()">
+          Aperçu avec la 1ère ligne
+        </button>
+        <div id="preview" style="display: none"></div>
+      </div>
+
+      <!-- SECTION 4: Send -->
+      <div class="section">
+        <h2>4. Envoyer les emails</h2>
+        <p id="recipientCount" style="margin-bottom: 15px; color: #7f8c8d">
+          Aucun destinataire chargé.
+        </p>
+        <button
+          class="btn-success"
+          id="sendBtn"
+          onclick="sendEmails()"
+          disabled
+        >
+          Envoyer les emails
+        </button>
+        <div class="progress-bar" id="progressBar">
+          <div class="progress-bar-inner" id="progressBarInner">0%</div>
+        </div>
+        <div id="log"></div>
+      </div>
+    </div>
+
+    <script>
+      let excelData = [];
+      let columns = [];
+
+      // Parse Excel file
+      document
+        .getElementById("excelFile")
+        .addEventListener("change", function (e) {
+          const file = e.target.files[0];
+          if (!file) return;
+
+          const reader = new FileReader();
+          reader.onload = function (evt) {
+            const data = new Uint8Array(evt.target.result);
+            const workbook = XLSX.read(data, { type: "array" });
+            const sheetName = workbook.SheetNames[0];
+            const sheet = workbook.Sheets[sheetName];
+            const json = XLSX.utils.sheet_to_json(sheet);
+
+            if (json.length === 0) {
+              alert("Le fichier est vide ou ne contient pas de données.");
+              return;
+            }
+
+            excelData = json;
+            columns = Object.keys(json[0]);
+
+            // Check for email column
+            const emailCol = columns.find(
+              (c) => c.toLowerCase().trim() === "email"
+            );
+            if (!emailCol) {
+              alert(
+                'Attention : aucune colonne "email" trouvée. Vérifiez que votre fichier contient une colonne nommée "email".'
+              );
+            }
+
+            // Display preview table
+            let html =
+              "<p><strong>" +
+              json.length +
+              " lignes trouvées</strong> (feuille : " +
+              sheetName +
+              ")</p>";
+            html += '<div class="table-container"><table><tr>';
+            columns.forEach(function (col) {
+              html += "<th>" + escapeHtml(col) + "</th>";
+            });
+            html += "</tr>";
+            const previewRows = json.slice(0, 5);
+            previewRows.forEach(function (row) {
+              html += "<tr>";
+              columns.forEach(function (col) {
+                html +=
+                  "<td>" +
+                  escapeHtml(row[col] !== undefined ? String(row[col]) : "") +
+                  "</td>";
+              });
+              html += "</tr>";
+            });
+            if (json.length > 5) {
+              html +=
+                '<tr><td colspan="' +
+                columns.length +
+                '" style="text-align:center;color:#999">... et ' +
+                (json.length - 5) +
+                " autres lignes</td></tr>";
+            }
+            html += "</table></div>";
+            document.getElementById("excelPreview").innerHTML = html;
+
+            // Display placeholders
+            const plDiv = document.getElementById("placeholderList");
+            let plHtml =
+              "<strong>Variables disponibles (cliquez pour insérer) :</strong><br/>";
+            columns.forEach(function (col) {
+              plHtml +=
+                '<span onclick="insertPlaceholder(\'' +
+                col +
+                "')\">{{"
+                + col +
+                "}}</span> ";
+            });
+            plDiv.innerHTML = plHtml;
+            plDiv.style.display = "block";
+
+            // Update recipient count
+            document.getElementById("recipientCount").innerHTML =
+              "<strong>" +
+              json.length +
+              "</strong> destinataire(s) prêt(s) à recevoir un email.";
+            document.getElementById("sendBtn").disabled = false;
+          };
+          reader.readAsArrayBuffer(file);
+        });
+
+      function insertPlaceholder(colName) {
+        const bodyEl = document.getElementById("emailBody");
+        const start = bodyEl.selectionStart;
+        const end = bodyEl.selectionEnd;
+        const text = bodyEl.value;
+        const placeholder = "{{" + colName + "}}";
+        bodyEl.value =
+          text.substring(0, start) + placeholder + text.substring(end);
+        bodyEl.focus();
+        bodyEl.selectionStart = bodyEl.selectionEnd =
+          start + placeholder.length;
+      }
+
+      function showPreview() {
+        if (excelData.length === 0) {
+          alert("Veuillez d'abord importer un fichier Excel.");
+          return;
+        }
+        const subject = document.getElementById("emailSubject").value;
+        const body = document.getElementById("emailBody").value;
+        const row = excelData[0];
+
+        let previewSubject = subject;
+        let previewBody = body;
+        columns.forEach(function (col) {
+          const regex = new RegExp("\\{\\{" + col + "\\}\\}", "g");
+          const val = row[col] !== undefined ? String(row[col]) : "";
+          previewSubject = previewSubject.replace(regex, val);
+          previewBody = previewBody.replace(regex, val);
+        });
+
+        const previewEl = document.getElementById("preview");
+        previewEl.style.display = "block";
+        previewEl.innerHTML =
+          "<strong>Objet :</strong> " +
+          escapeHtml(previewSubject) +
+          "\n\n" +
+          escapeHtml(previewBody);
+      }
+
+      async function sendEmails() {
+        const smtpHost = document.getElementById("smtpHost").value.trim();
+        const smtpPort = document.getElementById("smtpPort").value.trim();
+        const smtpUser = document.getElementById("smtpUser").value.trim();
+        const smtpPass = document.getElementById("smtpPass").value;
+        const subject = document.getElementById("emailSubject").value;
+        const body = document.getElementById("emailBody").value;
+
+        if (!smtpHost || !smtpPort || !smtpUser || !smtpPass) {
+          alert("Veuillez remplir tous les champs SMTP.");
+          return;
+        }
+        if (!subject || !body) {
+          alert("Veuillez remplir l'objet et le corps de l'email.");
+          return;
+        }
+        if (excelData.length === 0) {
+          alert("Veuillez importer un fichier Excel.");
+          return;
+        }
+
+        const emailCol = columns.find(
+          (c) => c.toLowerCase().trim() === "email"
+        );
+        if (!emailCol) {
+          alert(
+            'Aucune colonne "email" trouvée dans le fichier Excel. Impossible d\'envoyer.'
+          );
+          return;
+        }
+
+        if (
+          !confirm(
+            "Vous êtes sur le point d'envoyer " +
+              excelData.length +
+              " email(s). Continuer ?"
+          )
+        ) {
+          return;
+        }
+
+        const sendBtn = document.getElementById("sendBtn");
+        sendBtn.disabled = true;
+        sendBtn.textContent = "Envoi en cours...";
+
+        const logEl = document.getElementById("log");
+        logEl.style.display = "block";
+        logEl.textContent = "";
+
+        const progressBar = document.getElementById("progressBar");
+        const progressBarInner = document.getElementById("progressBarInner");
+        progressBar.style.display = "block";
+
+        function log(msg) {
+          logEl.textContent += msg + "\n";
+          logEl.scrollTop = logEl.scrollHeight;
+        }
+
+        log("Démarrage de l'envoi de " + excelData.length + " email(s)...");
+
+        try {
+          const response = await fetch("/sendEmails", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              smtp: {
+                host: smtpHost,
+                port: parseInt(smtpPort),
+                user: smtpUser,
+                pass: smtpPass,
+              },
+              subject: subject,
+              body: body,
+              recipients: excelData,
+              emailColumn: emailCol,
+              columns: columns,
+            }),
+          });
+
+          const result = await response.json();
+
+          if (result.results) {
+            let success = 0;
+            let failed = 0;
+            result.results.forEach(function (r, i) {
+              const pct = Math.round(((i + 1) / result.results.length) * 100);
+              progressBarInner.style.width = pct + "%";
+              progressBarInner.textContent = pct + "%";
+
+              if (r.success) {
+                log("[OK] " + r.email + " - Email envoyé");
+                success++;
+              } else {
+                log("[ERREUR] " + r.email + " - " + r.error);
+                failed++;
+              }
+            });
+
+            log("\n--- RÉSUMÉ ---");
+            log("Total : " + result.results.length);
+            log("Réussis : " + success);
+            log("Échoués : " + failed);
+          } else if (result.error) {
+            log("[ERREUR GLOBALE] " + result.error);
+          }
+        } catch (err) {
+          log("[ERREUR] " + err.message);
+        }
+
+        sendBtn.disabled = false;
+        sendBtn.textContent = "Envoyer les emails";
+      }
+
+      function escapeHtml(str) {
+        var div = document.createElement("div");
+        div.appendChild(document.createTextNode(str));
+        return div.innerHTML;
+      }
+    </script>
+  </body>
+</html>
